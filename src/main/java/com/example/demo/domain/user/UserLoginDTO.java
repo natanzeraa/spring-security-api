@@ -1,4 +1,4 @@
 package com.example.demo.domain.user;
 
-public record UserLoginDTO() {
+public record UserLoginDTO(String login, String password) {
 }
