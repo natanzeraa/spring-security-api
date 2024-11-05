@@ -31,6 +31,12 @@ public class User implements UserDetails {
     @NotNull(message = "Role is required")
     private UserRole role;
 
+    public User(String login, String encryptedPassword, UserRole role) {
+        this.login = login;
+        this.password = encryptedPassword;
+        this.role = role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == UserRole.ADMIN)
