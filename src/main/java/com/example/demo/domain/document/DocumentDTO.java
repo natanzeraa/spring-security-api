@@ -1,4 +1,6 @@
 package com.example.demo.domain.document;
 
-public record UserDTO(String login, String password, UserRole role) {
+import java.util.UUID;
+
+public record DocumentDTO(String title, String url, UUID user) {
 }
