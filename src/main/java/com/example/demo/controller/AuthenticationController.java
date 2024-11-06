@@ -11,43 +11,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 public class AuthenticationController {
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserRepository repository;
+    UserRepository repository;
 
     @Autowired
     TokenServiceConfiguration tokenServiceConfiguration;
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Valid UserAuthenticationDTO data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+        UserDetails userDetails = repository.findByLogin(data.login());
 
-        var token = tokenServiceConfiguration.generateToken((User) auth.getPrincipal());
+        if(userDetails == null)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if(!encoder.matches(data.password(), userDetails.getPassword()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid password");
+
+        var token = tokenServiceConfiguration.generateToken((User) userDetails);
         return ResponseEntity.status(HttpStatus.OK).body(new UserLoginResponseDTO(token));
     }
 
+    @PostMapping("/hash-generator/{password}")
+    public ResponseEntity<Object> hashGenerator(@PathVariable String password) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(new BCryptPasswordEncoder().encode(password));
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody @Valid UserRegisterDTO data) {
-        if(this.repository.findByLogin(data.login()) != null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    public ResponseEntity<Object> register(@RequestBody @Valid UserRegisterDTO data) {
+        if(repository.findByLogin(data.login()) != null)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User already exists, try to login");
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.login(), encryptedPassword, data.role());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.repository.save(newUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(newUser));
     }
 }
