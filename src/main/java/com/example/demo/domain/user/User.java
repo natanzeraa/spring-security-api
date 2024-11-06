@@ -18,8 +18,8 @@ import java.util.UUID;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @NotNull(message = "Login is required")
     @Email(message = "Must be a valid email")
@@ -29,7 +29,10 @@ public class User implements UserDetails {
     private String password;
 
     @NotNull(message = "Role is required")
+    @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    public User(){}
 
     public User(String login, String encryptedPassword, UserRole role) {
         this.login = login;
@@ -39,10 +42,23 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        String userRole = this.role.name();
+
         if(this.role == UserRole.ADMIN)
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER"),
+                    new SimpleGrantedAuthority("ROLE_VIEWER")
+            );
+        else if (this.role == UserRole.USER) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_USER"),
+                    new SimpleGrantedAuthority("ROLE_VIEWER")
+            );
+        }
+        else {
+            return List.of(new SimpleGrantedAuthority( "ROLE_" + userRole));
+        }
     }
 
     @Override
