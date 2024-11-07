@@ -30,6 +30,10 @@ To run this project locally, you can use Docker to set up the MySQL database and
 4. Access phpMyAdmin at http://localhost:8090 to manage your database.
 5. Uncomment and configure the springboot service in docker-compose.yml if you want to run the Spring Boot application within Docker.
 
+#### You can also download the requests file from here: 
+
+[![Download](https://img.shields.io/badge/DOWNLOAD-C78652?style=for-the-badge&logo=download%20web%20tokens&logoColor=white)](https://drive.google.com/file/d/1blepqCFd3cSNkJgO54se-tHVF2cG46oX/view?usp=sharing)
+
 ---
 
 ## Authentication Endpoints
