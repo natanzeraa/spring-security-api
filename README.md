@@ -145,15 +145,14 @@ Allows users with any role to view documents.
     }
 ]
 ```
-
-## Author
+---
 
 <div align="center">
+    <h6>Author</h6>
     <img src="https://avatars.githubusercontent.com/u/172435339?v=4/150" alt="Author's Photo" style="border-radius: 50%; width: 80px; height:80px;">
     <h3>Natan Oliveira</h3>
-    <p>Backend Developer.</p>
-    <a href="https://www.linkedin.com/">
+    <h6>Backend Developer.</h6>
+    <a href="https://www.linkedin.com/in/natan-oliveira-71023822b/">
         <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
     </a>
 </div>
-``` 
