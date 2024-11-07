@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/auth/register").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/documents").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/documents").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/documents").hasRole("VIEWER")
 
                         .anyRequest().authenticated()
